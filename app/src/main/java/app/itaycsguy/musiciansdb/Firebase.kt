@@ -9,10 +9,6 @@ import com.google.firebase.auth.GoogleAuthProvider
 class Firebase {
     private val _firebaseAuth : FirebaseAuth = FirebaseAuth.getInstance()
 
-    public fun getFirebaseAuth() : FirebaseAuth{
-        return this._firebaseAuth
-    }
-
     public fun connectByGoogle(acct: GoogleSignInAccount, activitySrc : AppCompatActivity, activityDest : AppCompatActivity) {
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         this._firebaseAuth.signInWithCredential(credential).addOnCompleteListener(activitySrc) {

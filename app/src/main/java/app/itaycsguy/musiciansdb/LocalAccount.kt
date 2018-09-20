@@ -5,23 +5,22 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import com.google.firebase.database.*
 
 
 class LocalAccount(currentActivity : AppCompatActivity) {
     private val SIGNED_IN : Int = 0
     private val _currentActivity : AppCompatActivity = currentActivity
-    private val _localUsername: EditText = currentActivity.findViewById(R.id.text_username)
-    private val _localPassword: EditText = currentActivity.findViewById(R.id.text_password)
-    private var _localSignInButton: Button = currentActivity.findViewById(R.id.sign_in_button) as Button
-    private var _localSignUpButton: Button = currentActivity.findViewById(R.id.sign_up_button) as Button
-    private var _localForgotButton: Button = currentActivity.findViewById(R.id.forgot_button) as Button
-    private val _database : FirebaseDatabase = FirebaseDatabase.getInstance()
+    private val _localemail: EditText = currentActivity.findViewById(R.id.text_welcome_email)
+    private val _localPassword: EditText = currentActivity.findViewById(R.id.text_welcome_password)
+    private var _localSignInButton: Button = currentActivity.findViewById(R.id.sign_in_welcome_button) as Button
+    private var _localSignUpButton: Button = currentActivity.findViewById(R.id.sign_up_welcome_button) as Button
+    private var _localForgotButton: Button = currentActivity.findViewById(R.id.forgot_welcome_button) as Button
     private lateinit var _user : User
 
     init {
         this._localSignInButton.setOnClickListener {
-            this.localUserValidate(this._localUsername.text.toString(), this._localPassword.text.toString())
+            val a = this._currentActivity.intent.getStringExtra("photo")
+            this.localUserValidate(this._localemail.text.toString(), this._localPassword.text.toString())
         }
         this._localSignUpButton.setOnClickListener {
             val intent = Intent(this._currentActivity, SignUpActivity::class.java)
@@ -57,10 +56,5 @@ class LocalAccount(currentActivity : AppCompatActivity) {
         intent.putExtra("authentication_vendor","local")
         intent.putExtra("user_name",this._user.getUserName())
         this._currentActivity.startActivity(intent)
-    }
-
-    public fun writeDB(dbPath : String,map : HashMap<String,String>) {
-        val userEntry = this._database.getReference(dbPath.trim().replace("@","_").replace(".","_"))
-        userEntry.setValue(map)
     }
 }

@@ -13,9 +13,9 @@ class LoginRecoveryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_recovery)
 
-        val sendButton = findViewById(R.id.send_button) as Button
+        val sendButton = findViewById(R.id.send_recovery_button) as Button
         sendButton.setOnClickListener {
-            val emailAddrText = (findViewById(R.id.email_address_text) as EditText).text.toString()
+            val emailAddrText = (findViewById(R.id.text_email_recovery) as EditText).text.toString()
             if(emailAddrText.length > 0) {
                 this.sendEmail(emailAddrText)
                 val text = "An email is send to " + emailAddrText + "!\nCheck your email inbox."

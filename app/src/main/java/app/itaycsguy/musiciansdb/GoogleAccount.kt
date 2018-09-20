@@ -23,7 +23,7 @@ class GoogleAccount(currentActivity : AppCompatActivity) :  GoogleApiClient.OnCo
     private val _googleApiClient : GoogleApiClient = GoogleApiClient.Builder(currentActivity).enableAutoManage(currentActivity,this).addApi(Auth.GOOGLE_SIGN_IN_API,this._signInOptions).build()
     private lateinit var _user : User
     private lateinit var _signInResult : GoogleSignInResult
-    private var _googleButton : SignInButton = currentActivity.findViewById(R.id.google_sign_in) as SignInButton
+    private var _googleButton : SignInButton = currentActivity.findViewById(R.id.google_sign_in_welcome_button) as SignInButton
     private val _database : FirebaseDatabase = FirebaseDatabase.getInstance()
 
     init {
@@ -44,7 +44,7 @@ class GoogleAccount(currentActivity : AppCompatActivity) :  GoogleApiClient.OnCo
 
     override fun onClick(p0: View?) {
         when (p0?.id) {
-            R.id.google_sign_in -> {
+            R.id.google_sign_in_welcome_button -> {
                 this.signIn()
             }
         }

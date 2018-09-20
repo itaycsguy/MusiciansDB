@@ -28,18 +28,18 @@ class ProfileActivity : AppCompatActivity() {
             this.givenName = savedInstanceState.getStringExtra("given_name")
             this.familyName = savedInstanceState.getStringExtra("family_name")
         }
-        val localImage = findViewById<ImageView>(R.id.prof_image)
+        val localImage = findViewById<ImageView>(R.id.my_profile_photo)
         if(this.image != null && this.image != Uri.EMPTY && this.image != Uri.parse("null")) {
             localImage.setImageURI(this.image)
         }
-        findViewById<TextView>(R.id.username).append(" ${this.name}")
-        findViewById<TextView>(R.id.email).append(" ${this.email}")
-        val continueButton = findViewById(R.id.continue_button) as Button
+        findViewById<TextView>(R.id.profile_username).append(" ${this.name}")
+        findViewById<TextView>(R.id.profile_email).append(" ${this.email}")
+        val continueButton = findViewById(R.id.continue_profile_button) as Button
         continueButton.setOnClickListener {
             val intent = Intent(this, MoragActivity::class.java)
             startActivity(intent)
         }
-        val signOutButton = findViewById(R.id.sign_out_button) as Button
+        val signOutButton = findViewById(R.id.sign_out_profile_button) as Button
         signOutButton.setOnClickListener {
             if(this._authenticationVendor == "google") {
                 this._firebase.disconnect()

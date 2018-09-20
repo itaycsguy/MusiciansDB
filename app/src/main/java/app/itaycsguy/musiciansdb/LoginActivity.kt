@@ -16,33 +16,26 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var _passwordField : EditText
 
     private fun fillDetails(savedInstanceState : Intent) {
-        val map : HashMap<String,String> = HashMap()
-        val username = savedInstanceState.getStringExtra("user_name")
-        map.put("user_name",username)
-        if(username != null) {
-            this._usernameField.append(username.toString())
+        val email = savedInstanceState.getStringExtra("email")
+        if(email != null) {
+            this._usernameField.append(email.toString())
         }
         val password = savedInstanceState.getStringExtra("password")
-        map.put("password",password)
         if(password != null) {
             this._passwordField.append(password.toString())
-        }
-        val email = savedInstanceState.getStringExtra("email")
-        map.put("email",email)
-        val authentication_vendor = savedInstanceState.getStringExtra("authentication_vendor")
-        map.put("authentication_vendor",authentication_vendor)
-        val pathString = savedInstanceState.getStringExtra("pathString")
-        if(authentication_vendor != null && pathString != null) {
-            this._localAccount = LocalAccount(this)
-            this._localAccount.writeDB(pathString, map)
         }
     }
 
     private fun init(savedInstanceState: Intent){
         // variables
-        this._usernameField = findViewById(R.id.text_username) as EditText
-        this._passwordField = findViewById(R.id.text_password) as EditText
-        this.fillDetails(savedInstanceState)
+        this._usernameField = findViewById(R.id.text_welcome_email) as EditText
+        this._passwordField = findViewById(R.id.text_welcome_password) as EditText
+        val from_activity = savedInstanceState.getStringExtra("from_activity")
+        if(from_activity != null && from_activity == "SignUpActivity") {
+            val photo = savedInstanceState.getStringExtra("photo")
+            this.fillDetails(savedInstanceState)
+            // TODO: need to seperate this case to different issues
+        }
         // firebase
         this._firebase = Firebase()
         // google

@@ -13,12 +13,12 @@ class LoginRecoveryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_recovery)
 
-        val sendButton = findViewById(R.id.send_recovery_button) as Button
+        val sendButton : Button = findViewById(R.id.send_recovery_button)
         sendButton.setOnClickListener {
             val emailAddrText = (findViewById(R.id.text_email_recovery) as EditText).text.toString()
-            if(emailAddrText.length > 0) {
+            if(emailAddrText.isNotEmpty()) {
                 this.sendEmail(emailAddrText)
-                val text = "An email is send to " + emailAddrText + "!\nCheck your email inbox."
+                val text : String = "An email is send to " + emailAddrText + "!\nCheck your email inbox."
                 Toast.makeText(this@LoginRecoveryActivity, text, Toast.LENGTH_LONG).show()
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)

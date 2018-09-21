@@ -1,26 +1,25 @@
 package app.itaycsguy.musiciansdb
 
-
 class User(details : HashMap<String,String>) {
     private val _details : HashMap<String,String> = details.clone() as HashMap<String,String>
 
-    public fun getUserName() : String {
+    fun getUserName() : String {
         return this._details.get("user_name").toString()
     }
 
-    public fun getEmail() : String {
+    fun getEmail() : String {
         return this._details.get("email").toString()
     }
 
-    public fun getPhoto() : String {
+    fun getPhoto() : String {
         return this._details.get("photo").toString()
     }
 
-    public fun getGivenName() : String {
+    fun getGivenName() : String {
         return this._details.get("given_name").toString()
     }
 
-    public fun getFamilyName() : String {
+    fun getFamilyName() : String {
         return this._details.get("family_name").toString()
     }
 }

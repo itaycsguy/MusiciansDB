@@ -28,35 +28,36 @@ class SignUpActivity : AppCompatActivity() , View.OnClickListener {
     private var _imageview: ImageView? = null
     private val GALLERY = 1
     private val CAMERA = 2
+    private val PASS_LENGTH = 8
 
     companion object {
-        private val IMAGE_DIRECTORY = "/MyPhotosToMusiciansDB"
+        private val IMAGE_DIRECTORY = "/MusiciansDBPhotons"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
-        this._buttonSignUp = findViewById(R.id.registiration_signup_button) as Button
+        this._buttonSignUp = findViewById<Button>(R.id.registiration_signup_button)
         this._buttonSignUp.setOnClickListener(this)
-        val btn_attach_photo = findViewById(R.id.registiration_attach_photo_button) as Button
-        btn_attach_photo.setOnClickListener(this)
+        val btnAttachPhoto = findViewById<Button>(R.id.registiration_attach_photo_button)
+        btnAttachPhoto.setOnClickListener(this)
         this._imageview = ImageView(this)
     }
 
     override fun onClick(p0: View?) {
         when(p0?.id) {
             R.id.registiration_signup_button -> {
-                val email = (findViewById(R.id.registiration_email) as EditText).text.toString()
-                val givenname = (findViewById(R.id.registiration_givenname) as EditText).text.toString()
-                val familyname = (findViewById(R.id.registiration_family_name) as EditText).text.toString()
-                val username = (findViewById(R.id.registiration_username) as EditText).text.toString()
-                val password = (findViewById(R.id.registiration_password) as EditText).text.toString()
-                val password_confirm = (findViewById(R.id.registiration_confirm_password) as EditText).text.toString()
+                val email = (findViewById<EditText>(R.id.registiration_email)).text.toString()
+                val givenname = (findViewById<EditText>(R.id.registiration_givenname)).text.toString()
+                val familyname = (findViewById<EditText>(R.id.registiration_family_name)).text.toString()
+                val username = (findViewById<EditText>(R.id.registiration_username)).text.toString()
+                val password = (findViewById<EditText>(R.id.registiration_password)).text.toString()
                 val photo = this._photoPath.toString()
-                var text = ""
-                // TODO: need to validate user inputs!!!
-                if (text.length > 0) {
+                val isValid : Boolean = this.isValidPassword(password) && this.isValidEmail(email)
+                val text : String
+                if (!isValid) {
+                    text = "Invalid provided details."
                     Toast.makeText(this, text, Toast.LENGTH_LONG).show()
                 } else {
                     text = "Registered!"
@@ -72,7 +73,7 @@ class SignUpActivity : AppCompatActivity() , View.OnClickListener {
                     map.put("photo",photo)
                     this.writeDB("users/" + email,map)
 
-                    val intent = Intent(this,LoginActivity::class.java)
+                    val intent = Intent(this, LoginActivity::class.java)
                     intent.putExtra("email",email)
                     intent.putExtra("password",password)
                     intent.putExtra("photo",photo)
@@ -150,9 +151,10 @@ class SignUpActivity : AppCompatActivity() , View.OnClickListener {
         }
     }
 
-    fun saveImage(myBitmap: Bitmap) : String {
+    private fun saveImage(myBitmap: Bitmap) : String {
         val bytes = ByteArrayOutputStream()
-        myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes)
+        val photoQuality = 90
+        myBitmap.compress(Bitmap.CompressFormat.JPEG, photoQuality, bytes)
         val wallpaperDirectory = File((Environment.getExternalStorageDirectory()).toString() + IMAGE_DIRECTORY)
         // have the object build the directory structure, if needed.
         Log.d("fee",wallpaperDirectory.toString())
@@ -176,18 +178,24 @@ class SignUpActivity : AppCompatActivity() , View.OnClickListener {
     }
 
     private fun isValidPassword(password: String):Boolean{
-        // TODO: check guest password format
-        print(password)
-        return true
+        return password.length >= this.PASS_LENGTH
     }
 
-    private fun isExistUsername(username: String):Boolean{
-        // TODO: check guest username format
-        print(username)
+    private fun isValidEmail(email: String):Boolean{
+        val usersEntry = this._database.getReference("users")
+        if(usersEntry.child(email).key!!.isEmpty() && this.isCorrectEmailFormat(email)) {
+            return true
+        }
         return false
     }
 
-    public fun writeDB(dbPath : String,map : HashMap<String,String>) {
+    fun isCorrectEmailFormat(email: String): Boolean {
+        val pattern = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$".toRegex()
+        val matchResult = pattern.matchEntire(email)
+        return matchResult == null
+    }
+
+    fun writeDB(dbPath : String,map : HashMap<String,String>) {
         val userEntry = this._database.getReference(dbPath.trim().replace("@","_").replace(".","_"))
         userEntry.setValue(map)
     }

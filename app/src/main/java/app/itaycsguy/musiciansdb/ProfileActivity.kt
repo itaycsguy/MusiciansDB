@@ -14,19 +14,21 @@ class ProfileActivity : AppCompatActivity() {
     private val _firebase : Firebase = Firebase()
     private lateinit var _authenticationVendor : String
     private lateinit var name: String
-    private var email: String? = null
+    private lateinit var email: String
+    private lateinit var givenName: String
+    private lateinit var familyName: String
     private var image: Uri? = null
-    private var givenName: String? = null
-    private var familyName: String? = null
 
-    private fun init(savedInstanceState: Intent){
-        this._authenticationVendor = savedInstanceState.getStringExtra("authentication_vendor")
-        this.name = savedInstanceState.getStringExtra("user_name")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_profile)
+        this._authenticationVendor = this.intent.getStringExtra("authentication_vendor")
+        this.name = this.intent.getStringExtra("user_name")
         if(this._authenticationVendor == "google") {
-            this.email = savedInstanceState.getStringExtra("email")
-            this.image = Uri.parse(savedInstanceState.getStringExtra("photo"))
-            this.givenName = savedInstanceState.getStringExtra("given_name")
-            this.familyName = savedInstanceState.getStringExtra("family_name")
+            this.email = this.intent.getStringExtra("email")
+            this.image = Uri.parse(this.intent.getStringExtra("photo"))
+            this.givenName = this.intent.getStringExtra("given_name")
+            this.familyName = this.intent.getStringExtra("family_name")
         }
         val localImage = findViewById<ImageView>(R.id.my_profile_photo)
         if(this.image != null && this.image != Uri.EMPTY && this.image != Uri.parse("null")) {
@@ -34,12 +36,13 @@ class ProfileActivity : AppCompatActivity() {
         }
         findViewById<TextView>(R.id.profile_username).append(" ${this.name}")
         findViewById<TextView>(R.id.profile_email).append(" ${this.email}")
-        val continueButton = findViewById(R.id.continue_profile_button) as Button
+        val continueButton : Button = findViewById(R.id.continue_profile_button)
         continueButton.setOnClickListener {
+            // TODO: change to Morag's activities
             val intent = Intent(this, MoragActivity::class.java)
             startActivity(intent)
         }
-        val signOutButton = findViewById(R.id.sign_out_profile_button) as Button
+        val signOutButton : Button = findViewById(R.id.sign_out_profile_button)
         signOutButton.setOnClickListener {
             if(this._authenticationVendor == "google") {
                 this._firebase.disconnect()
@@ -53,11 +56,5 @@ class ProfileActivity : AppCompatActivity() {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile)
-        this.init(intent)
     }
 }

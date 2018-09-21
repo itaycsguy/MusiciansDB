@@ -15,30 +15,24 @@ import com.google.firebase.database.*
 
 
 class GoogleAccount(currentActivity : AppCompatActivity) :  GoogleApiClient.OnConnectionFailedListener , View.OnClickListener {
-    public val SIGNED_IN : Int = 0
-    public val ERROR : Int = 1
+    val SIGNED_IN : Int = 0
+    val REQ_CODE = 201
     private val _currentActivity : AppCompatActivity = currentActivity
-    private val REQ_CODE = 201
     private val _signInOptions : GoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(currentActivity.getString(R.string.request_client_id)).requestEmail().build()
     private val _googleApiClient : GoogleApiClient = GoogleApiClient.Builder(currentActivity).enableAutoManage(currentActivity,this).addApi(Auth.GOOGLE_SIGN_IN_API,this._signInOptions).build()
     private lateinit var _user : User
     private lateinit var _signInResult : GoogleSignInResult
     private var _googleButton : SignInButton = currentActivity.findViewById(R.id.google_sign_in_welcome_button) as SignInButton
     private val _database : FirebaseDatabase = FirebaseDatabase.getInstance()
-
     init {
         this._googleButton.setOnClickListener(this)
     }
 
-    public fun getGoogleResult() : GoogleSignInResult {
+    fun getGoogleResult() : GoogleSignInResult {
         return this._signInResult
     }
 
-    public fun getRequestCode() : Int {
-        return this.REQ_CODE
-    }
-
-    public fun setGoogleResult(signInResult : GoogleSignInResult) {
+    fun setGoogleResult(signInResult : GoogleSignInResult) {
         this._signInResult = signInResult
     }
 
@@ -50,7 +44,7 @@ class GoogleAccount(currentActivity : AppCompatActivity) :  GoogleApiClient.OnCo
         }
     }
 
-    public fun signIn() {
+    fun signIn() {
         val indent = Auth.GoogleSignInApi.getSignInIntent(this._googleApiClient)
         this._currentActivity.startActivityForResult(indent,this.REQ_CODE)
     }
@@ -59,7 +53,7 @@ class GoogleAccount(currentActivity : AppCompatActivity) :  GoogleApiClient.OnCo
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    public fun handleResults(data : Intent?) {
+    fun handleResults(data : Intent?) {
         val result : GoogleSignInResult = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
         this.setGoogleResult(result)
         if(result.isSuccess()) {
@@ -74,7 +68,7 @@ class GoogleAccount(currentActivity : AppCompatActivity) :  GoogleApiClient.OnCo
         }
     }
 
-    public fun updateUI(login_status : Int) {
+    fun updateUI(login_status : Int) {
         val text : String
         when(login_status){
             this.SIGNED_IN -> {
@@ -82,15 +76,12 @@ class GoogleAccount(currentActivity : AppCompatActivity) :  GoogleApiClient.OnCo
                 Toast.makeText(this._currentActivity, text, Toast.LENGTH_LONG).show()
                 moveActivities(ProfileActivity())
                 }
-            this.ERROR -> {
-                text = "Error is occur during google/firebase authentication."
-                Toast.makeText(this._currentActivity, text, Toast.LENGTH_LONG).show()
-            }
         }
     }
 
-    public fun moveActivities(newActivity : AppCompatActivity) {
+    fun moveActivities(newActivity : AppCompatActivity) {
         val intent = Intent(this._currentActivity, newActivity::class.java)
+        // next activity issues:
         intent.putExtra("authentication_vendor","google")
         intent.putExtra("user_name",this._user.getUserName())
         intent.putExtra("email",this._user.getEmail())
@@ -98,6 +89,7 @@ class GoogleAccount(currentActivity : AppCompatActivity) :  GoogleApiClient.OnCo
         intent.putExtra("given_name",this._user.getGivenName())
         intent.putExtra("family_name",this._user.getFamilyName())
 
+        // DB issues:
         val dbPath : String = "users/" + this._user.getEmail().trim().replace("@","_").replace(".","_")
         val map : HashMap<String,String> = HashMap()
         map.put("authentication_vendor","google")
@@ -110,7 +102,7 @@ class GoogleAccount(currentActivity : AppCompatActivity) :  GoogleApiClient.OnCo
         this._currentActivity.startActivity(intent)
     }
 
-    public fun writeDB(dbPath : String,map : HashMap<String,String>) {
+    fun writeDB(dbPath : String,map : HashMap<String,String>) {
         val userEntry = this._database.getReference(dbPath.trim())
         userEntry.setValue(map)
     }
